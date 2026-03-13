@@ -9,13 +9,12 @@ import {
   Activity,
   Clock,
   CheckCircle,
-  AlertCircle,
   Cpu,
-  HardDrive
+  HardDrive,
+  TrendingUp
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
 
 // Mock data - replace with real data from API
 const recentDeploys = [
@@ -52,10 +51,10 @@ const recentDeploys = [
 ]
 
 const stats = [
-  { label: 'Active Deploys', value: '2', icon: Box, trend: '+1 this week' },
-  { label: 'Total Requests', value: '12.4K', icon: Activity, trend: '+23% vs last week' },
-  { label: 'Uptime', value: '99.9%', icon: CheckCircle, trend: 'Last 30 days' },
-  { label: 'Credits', value: '1.5', icon: Zap, trend: 'Expires in 25 days' },
+  { label: 'Active Deploys', value: '2', icon: Box, trend: '+1 this week', trendUp: true },
+  { label: 'Total Requests', value: '12.4K', icon: Activity, trend: '+23% vs last week', trendUp: true },
+  { label: 'Uptime', value: '99.9%', icon: CheckCircle, trend: 'Last 30 days', trendUp: true },
+  { label: 'Credits', value: '1.5', icon: Zap, trend: 'Expires in 25 days', trendUp: false },
 ]
 
 export default function DashboardPage() {
@@ -79,17 +78,24 @@ export default function DashboardPage() {
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => (
-          <Card key={stat.label} className="border-border/50 bg-card/50">
+        {stats.map((stat, index) => (
+          <Card 
+            key={stat.label} 
+            className="border-border/50 bg-card/50 hover:bg-card/70 hover:border-primary/30 transition-all duration-300 group"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
             <CardContent className="p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <stat.icon className="w-4 h-4 text-primary" />
+                <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <stat.icon className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
                 </div>
                 <span className="text-sm text-muted-foreground">{stat.label}</span>
               </div>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{stat.trend}</div>
+              <div className="text-2xl font-bold group-hover:text-primary transition-colors">{stat.value}</div>
+              <div className={`text-xs mt-1 flex items-center gap-1 ${stat.trendUp ? 'text-green-500' : 'text-muted-foreground'}`}>
+                {stat.trendUp && <TrendingUp className="w-3 h-3" />}
+                {stat.trend}
+              </div>
             </CardContent>
           </Card>
         ))}
